@@ -33,8 +33,7 @@ case "$(yq e '.bitcoind.type' /public-pool-data/start9/config.yaml)" in
     mkdir -p /public-pool-data/testnet
     ln -s /public-pool-data/testnet /public-pool/DB
     export NETWORK=testnet
-    # ZMQ seems to not work correctly (yet) on testnet4 + public pool
-    #export BITCOIN_ZMQ_HOST=tcp://bitcoind-testnet.embassy:28333
+    export BITCOIN_ZMQ_HOST=tcp://bitcoind-testnet.embassy:28333
     export BITCOIN_RPC_URL=http://bitcoind-testnet.embassy
     export BITCOIN_RPC_PORT=48332
     echo "Configured Public Pool for testnet4: $BITCOIN_RPC_URL:$BITCOIN_RPC_PORT"
