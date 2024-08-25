@@ -6,11 +6,6 @@ echo
 echo "Starting Public Pool..."
 echo
 
-#cp -f /etc/Caddyfile.tpl /etc/Caddyfile
-#sed -i "s#%%LOGLEVEL%%#${LOGLEVEL:-INFO}#g" /etc/Caddyfile
-#sed -i "s#%%LOGFORMAT%%#${LOGFORMAT:-json}#g" /etc/Caddyfile
-
-# TODO: switch between mainnet/testnet
 export BITCOIN_RPC_USER=$(yq e '.bitcoind.user' /public-pool-data/start9/config.yaml)
 export BITCOIN_RPC_PASSWORD=$(yq e '.bitcoind.password' /public-pool-data/start9/config.yaml)
 export BITCOIN_RPC_TIMEOUT=10000
@@ -45,11 +40,8 @@ case "$(yq e '.bitcoind.type' /public-pool-data/start9/config.yaml)" in
 esac
 
 cd /public-pool
-/usr/local/bin/node dist/main &
+/usr/local/bin/node dist/main.js &
 app_process=$!
-
-#caddy run --config /etc/Caddyfile &
-#proxy_process=$!
 
 nginx -g "daemon off;" &
 proxy_process=$!

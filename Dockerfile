@@ -33,8 +33,9 @@ COPY patches/rpc-bitcoin+2.0.0.patch /build/public-pool/patches/rpc-bitcoin+2.0.
 
 RUN \
     cd public-pool && \
-    npm i && npm i patch-package && \
+    npm ci && \
     # apply patch for rpc-bitcoin (see: https://github.com/vansergen/rpc-bitcoin/pull/65)
+    npm i patch-package && \
     npx patch-package && \
     npm run build
 
@@ -48,8 +49,10 @@ COPY patches/environment.prod.ts /build/public-pool-ui/src/environments/environm
 
 RUN \
     cd public-pool-ui && \
-    npm i && npm run build
+    npm ci && \
+    npm run build
 
+# main container
 FROM node:18.20.4-bookworm-slim
 
 ENV NODE_ENV=production
@@ -65,7 +68,8 @@ COPY --from=build /usr/local/bin/yq /usr/local/bin/yq
 COPY assets/nginx.conf /etc/nginx/sites-available/default
 
 WORKDIR /public-pool
-COPY --from=build /build/public-pool .
+COPY --from=build /build/public-pool/node_modules ./node_modules
+COPY --from=build /build/public-pool/dist ./dist
 
 WORKDIR /var/www/html
 COPY --from=build /build/public-pool-ui/dist/public-pool-ui .
