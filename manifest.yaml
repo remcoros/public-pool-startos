@@ -1,0 +1,131 @@
+id: public-pool
+title: "Public Pool"
+version: 0.1.0
+release-notes: |
+  * Initial release of Public Pool for StartOS
+license: GPL
+wrapper-repo: "https://github.com/remcoros/public-pool-startos"
+upstream-repo: "https://github.com/benjamin-wilson/public-pool"
+support-site: "https://github.com/benjamin-wilson/public-pool/issues"
+marketing-site: "https://web.public-pool.io"
+donation-url: "https://web.public-pool.io"
+build: ["make"]
+description:
+  short: Public Pool - Fully Open Source Solo Bitcoin Mining Pool
+  long: |
+    Fully Open Source Solo Bitcoin Mining Pool
+assets:
+  license: LICENSE
+  icon: icon.png
+  instructions: instructions.md
+main:
+  type: docker
+  image: main
+  entrypoint: "docker_entrypoint.sh"
+  args: []
+  mounts:
+    main: /public-pool-data
+  gpu-acceleration: false
+hardware-requirements:
+  arch:
+    - x86_64
+    - aarch64
+health-checks:
+  web-ui:
+    name: Public Pool User Interface
+    success-message: Ready to be visited in a web browser
+    type: script
+config:
+  get:
+    type: script
+  set:
+    type: script
+properties: ~
+volumes:
+  main:
+    type: data
+interfaces:
+  main:
+    name: User Interface
+    description: Public Pool Web user interface
+    tor-config:
+      port-mapping:
+        80: "80"
+    lan-config:
+      443:
+        ssl: true
+        internal: 80
+    ui: true
+    protocols:
+      - tcp
+      - http
+## forwarding non-http ports is not supported in StartOS yet, use DIY port forwarding
+#  stratum:
+#    name: Stratum Interface
+#    description: Public Pool Stratum interface
+#    lan-config:
+#      3333:
+#        ssl: false
+#        internal: 3333
+#    ui: false
+#    protocols:
+#      - tcp
+dependencies:
+  bitcoind:
+    version: ">=26.0.0 <29.0.0"
+    requirement:
+      type: "opt-in"
+      how: "Use built-in Bitcoin Core (mainnet)"
+    description: Used to subscribe to new block events.
+    config:
+      check:
+        type: script
+      auto-configure:
+        type: script
+  bitcoind-testnet:
+    version: ">=26.0.0 <29.0.0"
+    requirement:
+      type: "opt-in"
+      how: "Use built-in Bitcoin Core (testnet4)"
+    description: Used to subscribe to new block events.
+    config:
+      check:
+        type: script
+      auto-configure:
+        type: script
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - create
+      - /mnt/backup
+      - /public-pool-data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /public-pool-data
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - restore
+      - /mnt/backup
+      - /public-pool-data
+    mounts:
+      BACKUP: /mnt/backup
+      main: /public-pool-data
+migrations:
+  from:
+    "*":
+      type: script
+      args: ["from"]
+  to:
+    "*":
+      type: script
+      args: ["to"]
