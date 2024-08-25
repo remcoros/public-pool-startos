@@ -24,7 +24,7 @@ case "$(yq e '.bitcoind.type' /public-pool-data/start9/config.yaml)" in
     mkdir -p /public-pool-data/mainnet
     ln -s /public-pool-data/mainnet /public-pool/DB
     export NETWORK=mainnet
-    export BITCOIN_ZMQ_HOST=tcp://bitcoind.embassy:28333
+    #export BITCOIN_ZMQ_HOST=tcp://bitcoind.embassy:28333
     export BITCOIN_RPC_URL=http://bitcoind.embassy
     export BITCOIN_RPC_PORT=8332
     echo "Configured Public Pool for mainnet: $BITCOIN_RPC_URL:$BITCOIN_RPC_PORT"
@@ -33,7 +33,7 @@ case "$(yq e '.bitcoind.type' /public-pool-data/start9/config.yaml)" in
     mkdir -p /public-pool-data/testnet
     ln -s /public-pool-data/testnet /public-pool/DB
     export NETWORK=testnet
-    export BITCOIN_ZMQ_HOST=tcp://bitcoind-testnet.embassy:28333
+    #export BITCOIN_ZMQ_HOST=tcp://bitcoind-testnet.embassy:28333
     export BITCOIN_RPC_URL=http://bitcoind-testnet.embassy
     export BITCOIN_RPC_PORT=48332
     echo "Configured Public Pool for testnet4: $BITCOIN_RPC_URL:$BITCOIN_RPC_PORT"
