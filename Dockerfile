@@ -1,7 +1,7 @@
-FROM node:18.20.4-bookworm-slim AS build
+FROM node:20-bookworm-slim AS build
 
 # Public Pool repo does not use versions/tags yet, point directly to commit sha
-ARG PUBLIC_POOL_SHA=0917911eb0edeba35e1cbe8de0c01d8a4e502cfb
+ARG PUBLIC_POOL_SHA=4282233d2f11ceecbd0d142e8292ccc9c37ea999
 ARG PUBLIC_POOL_UI_SHA=80081e337d3af829b0edf3990ad97ea430bd73d4
 
 # these are specified in Makefile
@@ -29,6 +29,7 @@ RUN \
     cd public-pool && \
     git checkout ${PUBLIC_POOL_SHA}
 
+# apply patch for rpc-bitcoin (see: https://github.com/vansergen/rpc-bitcoin/pull/65)
 COPY patches/rpc-bitcoin+2.0.0.patch /build/public-pool/patches/rpc-bitcoin+2.0.0.patch
 
 RUN \
@@ -53,7 +54,7 @@ RUN \
     npm run build
 
 # main container
-FROM node:18.20.4-bookworm-slim
+FROM node:20-bookworm-slim
 
 ENV NODE_ENV=production
 

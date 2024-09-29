@@ -12,7 +12,7 @@ Run the following command to switch to the "chrooted" environment, any system ch
 
 Install "socat":
 
-    apt install socat -y
+    apt update && apt install socat -y
 
 Paste the following, this will create a new systemd service responsible for port forwarding 3333 (Stratum):
 
@@ -39,6 +39,7 @@ Enable the new systemd service:
 
     systemctl enable socat.stratum
 
-Now exit the chroot environment. Note: this will reboot StartOS!
+Now exit the chroot environment. this will reboot StartOS!
+**Do NOT close the SSH window manually, actually type `exit` and let it reboot.**
 
     exit
