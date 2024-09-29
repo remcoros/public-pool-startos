@@ -39,6 +39,9 @@ case "$(yq e '.bitcoind.type' /public-pool-data/start9/config.yaml)" in
     ;;
 esac
 
+export POOL_IDENTIFIER=$(yq e '.pool-identifier' /public-pool-data/start9/config.yaml)
+echo "Set POOL_IDENTIFIER to '$POOL_IDENTIFIER'"
+
 cd /public-pool
 /usr/local/bin/node dist/main.js &
 app_process=$!

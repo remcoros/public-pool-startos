@@ -1,8 +1,9 @@
 id: public-pool
 title: "Public Pool"
-version: 0.1.0
+version: 0.2.0
 release-notes: |
-  * Initial release of Public Pool for StartOS
+  * Update to latest master branch of public-pool
+  * Ability to set 'Pool Identifier' (included in coinbase transaction)
 license: GPL
 wrapper-repo: "https://github.com/remcoros/public-pool-startos"
 upstream-repo: "https://github.com/benjamin-wilson/public-pool"

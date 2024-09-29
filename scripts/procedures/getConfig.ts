@@ -62,4 +62,16 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       },
     },
   },
+  "pool-identifier": {
+    "type": "string",
+    "name": "Pool Identifier",
+    "description":
+      "The pool identifier to include in the Coinbase transactions",
+    "copyable": true,
+    "default": "Public-Pool",
+    "placeholder": "Public-Pool",
+    "pattern": ".*",
+    "pattern-description": "any string",
+    "nullable": true,
+  },
 });
