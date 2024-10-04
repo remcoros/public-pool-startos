@@ -55,7 +55,7 @@ app_process=$!
 nginx -g "daemon off;" &
 proxy_process=$!
 
-# hook the TERM signal and wait for all our processes
+# hook the TERM signal and wait
 _term() {
     echo "Caught TERM signal!"
     kill -TERM "$proxy_process" 2>/dev/null
@@ -63,4 +63,13 @@ _term() {
 }
 
 trap _term TERM
-wait $app_process $proxy_process
+
+# wait for one of the processes to finish (or crash)
+wait -n $app_process $proxy_process
+status=$?
+
+# terminate the rest of processes
+kill -TERM "$proxy_process" 2>/dev/null
+kill -TERM "$app_process" 2>/dev/null
+
+exit $status
