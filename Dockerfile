@@ -32,6 +32,12 @@ RUN \
 # apply patch for rpc-bitcoin (see: https://github.com/vansergen/rpc-bitcoin/pull/65)
 COPY patches/rpc-bitcoin+2.0.0.patch /build/public-pool/patches/rpc-bitcoin+2.0.0.patch
 
+# Apply patches not included in upstream repo (yet)
+COPY patches/public-pool.patch /build/public-pool/public-pool.patch
+RUN \
+    cd public-pool && \
+    git apply public-pool.patch
+
 RUN \
     cd public-pool && \
     npm ci && \
