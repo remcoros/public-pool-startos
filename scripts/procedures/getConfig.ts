@@ -74,4 +74,15 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
     "pattern-description": "any string",
     "nullable": true,
   },
+  "pool-address": {
+    "type": "string",
+    "name": "Server IP/hostname",
+    "description":
+      "The IP address or hostname to show on the public-pool homepage",
+    "copyable": true,
+    "placeholder": "<StartOS Server IP>",
+    "nullable": true,
+    "pattern": ".*",
+    "pattern-description": "Server IP or hostname",
+  },
 });
