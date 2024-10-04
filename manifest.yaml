@@ -1,6 +1,6 @@
 id: public-pool
 title: "Public Pool"
-version: 0.2.1
+version: 0.2.2
 release-notes: |
   * Fix: add retry logic to 'getblocktemplate' in case Bitcoin Core fails to respond to RPC requests.
 license: GPL
