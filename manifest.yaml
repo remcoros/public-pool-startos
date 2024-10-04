@@ -1,9 +1,8 @@
 id: public-pool
 title: "Public Pool"
-version: 0.2.0
+version: 0.2.1
 release-notes: |
-  * Update to latest master branch of public-pool
-  * Ability to set 'Pool Identifier' (included in coinbase transaction)
+  * Fix: add retry logic to 'getblocktemplate' in case Bitcoin Core fails to respond to RPC requests.
 license: GPL
 wrapper-repo: "https://github.com/remcoros/public-pool-startos"
 upstream-repo: "https://github.com/benjamin-wilson/public-pool"
