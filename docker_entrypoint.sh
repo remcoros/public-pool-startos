@@ -42,6 +42,12 @@ esac
 export POOL_IDENTIFIER=$(yq e '.pool-identifier' /public-pool-data/start9/config.yaml)
 echo "Set POOL_IDENTIFIER to '$POOL_IDENTIFIER'"
 
+# set custom server address (shown on homepage)
+POOL_ADDRESS=$(yq e '.pool-address' /public-pool-data/start9/config.yaml)
+if [ -n "$POOL_ADDRESS" ] && [ "$POOL_ADDRESS" != "null" ]; then
+    sed -i "s/<StartOS Server IP>/$POOL_ADDRESS/" $(find /var/www/html/main.*.js)
+fi
+
 cd /public-pool
 /usr/local/bin/node dist/main.js &
 app_process=$!
