@@ -62,6 +62,12 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
       },
     },
   },
+  "zmq-enabled": {
+    "type": "boolean",
+    "name": "Use ZeroMQ (recommended)",
+    "description": "Uses ZeroMQ for new block notifications, this is generally faster than polling over RPC",
+    "default": true,
+  },
   "pool-identifier": {
     "type": "string",
     "name": "Pool Identifier",
