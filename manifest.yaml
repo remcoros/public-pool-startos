@@ -1,8 +1,10 @@
 id: public-pool
 title: "Public Pool"
-version: 0.2.2
+version: 0.2.3
 release-notes: |
   * Enable ZeroMQ for new block notifications
+  * instructions: use simpleproxy instead of socat
+  * public-pool-ui: fix minor warnings
 license: GPL
 wrapper-repo: "https://github.com/remcoros/public-pool-startos"
 upstream-repo: "https://github.com/benjamin-wilson/public-pool"

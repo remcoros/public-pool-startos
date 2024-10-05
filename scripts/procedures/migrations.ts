@@ -20,4 +20,4 @@ export const migration: T.ExpectedExports.migration = compat.migrations
         { version: "0.2.2", type: "down" },
       ),
     },
-  }, "0.2.2");
+  }, "0.2.3");

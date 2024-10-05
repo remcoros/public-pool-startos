@@ -1,0 +1,23 @@
+diff --git a/angular.json b/angular.json
+index 467bf25..ca7193c 100644
+--- a/angular.json
++++ b/angular.json
+@@ -38,7 +38,10 @@
+               ]
+             },
+             "scripts": [
+-              "node_modules/chart.js/dist/chart.js"
++              "node_modules/chart.js/dist/chart.umd.js"
++            ],
++            "allowedCommonJsDependencies": [
++              "moment"
+             ]
+           },
+           "configurations": {
+@@ -159,4 +162,4 @@
+   "cli": {
+     "analytics": false
+   }
+-}
+\ No newline at end of file
++}

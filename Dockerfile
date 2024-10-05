@@ -47,9 +47,11 @@ RUN \
 
 # patch environment.prod.ts for self-hosting
 COPY patches/environment.prod.ts /build/public-pool-ui/src/environments/environment.prod.ts
+COPY patches/public-pool-ui.patch /build/public-pool-ui/public-pool-ui.patch
 
 RUN \
     cd public-pool-ui && \
+    git apply public-pool-ui.patch && \
     npm ci && \
     npm run build
 
