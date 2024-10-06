@@ -8,7 +8,7 @@ echo
 
 export BITCOIN_RPC_USER=$(yq e '.bitcoind.user' /public-pool-data/start9/config.yaml)
 export BITCOIN_RPC_PASSWORD=$(yq e '.bitcoind.password' /public-pool-data/start9/config.yaml)
-export BITCOIN_RPC_TIMEOUT=10000
+export BITCOIN_RPC_TIMEOUT=$(yq e '.rpc-timeout' /public-pool-data/start9/config.yaml)
 export API_PORT=3334
 export STRATUM_PORT=3333
 export DEV_FEE_ADDRESS=
