@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { compat, types as T } from "../deps.ts";
 
 export const migration: T.ExpectedExports.migration = compat.migrations
@@ -20,4 +21,4 @@ export const migration: T.ExpectedExports.migration = compat.migrations
         { version: "0.2.2", type: "down" },
       ),
     },
-  }, "0.2.3");
+  }, "0.2.4");

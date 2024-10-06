@@ -65,8 +65,20 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
   "zmq-enabled": {
     "type": "boolean",
     "name": "Use ZeroMQ (recommended)",
-    "description": "Uses ZeroMQ for new block notifications, this is generally faster than polling over RPC",
+    "description":
+      "Use ZeroMQ for new block notifications, this is generally faster than polling over RPC",
     "default": true,
+  },
+  "rpc-timeout": {
+    "type": "number",
+    "name": "RPC Timeout",
+    "description":
+      "RPC Timeout in milliseconds. Increase this when public-pool crashes with RPC timeout errors",
+    "default": 10000,
+    "integral": true,
+    "nullable": true,
+    "units": "milliseconds",
+    "range": "[1000,300000]",
   },
   "pool-identifier": {
     "type": "string",
@@ -82,7 +94,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
   },
   "pool-address": {
     "type": "string",
-    "name": "Server IP/hostname",
+    "name": "Server IP/hostname (on homepage)",
     "description":
       "The IP address or hostname to show on the public-pool homepage",
     "copyable": true,
