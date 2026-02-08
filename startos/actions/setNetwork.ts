@@ -1,6 +1,7 @@
 import { sdk } from '../sdk'
 import { envFile } from '../file-models/env'
 import { mainnet, testnet } from '../utils'
+import { i18n } from '../i18n'
 
 export const setNetwork = sdk.Action.withoutInput(
   // id
@@ -16,9 +17,9 @@ export const setNetwork = sdk.Action.withoutInput(
     const other = NETWORK === 'mainnet' ? 'testnet' : 'mainnet'
 
     return {
-      name: `Switch to ${other}`,
-      description: `Currently connected to ${NETWORK}. Run action to connect to ${other} instead`,
-      warning: `Are you sure you want to switch to ${other}?`,
+      name: i18n('Switch to ${network}', { network: other }),
+      description: i18n('Currently connected to ${currentNetwork}. Run action to connect to ${otherNetwork} instead', { currentNetwork: NETWORK, otherNetwork: other }),
+      warning: i18n('Are you sure you want to switch to ${network}?', { network: other }),
       allowedStatuses: 'any',
       group: null,
       visibility: 'enabled',
@@ -34,8 +35,8 @@ export const setNetwork = sdk.Action.withoutInput(
 
     return {
       version: '1',
-      title: 'Success',
-      message: `Successfully switched to ${other}`,
+      title: i18n('Success'),
+      message: i18n('Successfully switched to ${network}', { network: other }),
       result: null,
     }
   },

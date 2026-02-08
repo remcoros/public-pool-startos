@@ -1,4 +1,5 @@
 import { matches, FileHelper } from '@start9labs/start-sdk'
+import { sdk } from '../sdk'
 import { envDefaults, mainnet, testnet } from '../utils'
 
 const { object, string, literal, oneOf, allOf, number, literals } = matches
@@ -44,7 +45,7 @@ export type EnvType = typeof shape._TYPE
 
 export const envFile = FileHelper.env(
   {
-    volumeId: 'main',
+    base: sdk.volumes.main,
     subpath: '.env',
   },
   shape,

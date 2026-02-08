@@ -1,7 +1,8 @@
 import { envFile } from './file-models/env'
 import { sdk } from './sdk'
 import { otherConfig as mainnetConfig } from 'bitcoind-startos/startos/actions/config/other'
-import { otherConfig as testnetConfig } from 'bitcoind-testnet-startos/startos/actions/config/other'
+//import { otherConfig as testnetConfig } from 'bitcoind-testnet-startos/startos/actions/config/other'
+import { otherConfig as testnetConfig } from 'bitcoind-startos/startos/actions/config/other'
 
 export const setDependencies = sdk.setupDependencies(async ({ effects }) => {
   const NETWORK = await envFile.read((e) => e.NETWORK).const(effects)

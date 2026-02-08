@@ -1,25 +1,31 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { SDKImageInputSpec } from '@start9labs/start-sdk/base/lib/types/ManifestTypes'
-
-const BUILD = process.env.BUILD || ''
-
-const architectures =
-  BUILD === 'x86_64' || BUILD === 'aarch64' ? [BUILD] : ['x86_64', 'aarch64']
 
 export const manifest = setupManifest({
   id: 'public-pool',
   title: 'Public Pool',
   license: 'GPL',
-  wrapperRepo: 'https://github.com/remcoros/public-pool-startos',
+  wrapperRepo: 'https://github.com/Start9Labs/public-pool-startos',
   upstreamRepo: 'https://github.com/benjamin-wilson/public-pool',
   supportSite: 'https://github.com/benjamin-wilson/public-pool/issues',
   docsUrl:
-    'https://github.com/remcoros/public-pool-startos/blob/main/instructions.md',
+    'https://github.com/Start9Labs/public-pool-startos/blob/main/instructions.md',
   marketingSite: 'https://web.public-pool.io',
   donationUrl: 'https://web.public-pool.io',
   description: {
-    short: 'Open source Bitcoin mining pool.',
-    long: 'Open source Bitcoin mining pool.',
+    short: {
+      en_US: 'Open source Bitcoin mining pool.',
+      es_ES: 'Pool de minería de Bitcoin de código abierto.',
+      de_DE: 'Open-Source-Bitcoin-Mining-Pool.',
+      pl_PL: 'Pula wydobywcza Bitcoin o otwartym kodzie źródłowym.',
+      fr_FR: 'Pool de minage Bitcoin open source.',
+    },
+    long: {
+      en_US: 'Open source Bitcoin mining pool.',
+      es_ES: 'Pool de minería de Bitcoin de código abierto.',
+      de_DE: 'Open-Source-Bitcoin-Mining-Pool.',
+      pl_PL: 'Pula wydobywcza Bitcoin o otwartym kodzie źródłowym.',
+      fr_FR: 'Pool de minage Bitcoin open source.',
+    },
   },
   volumes: ['main'],
   images: {
@@ -27,19 +33,9 @@ export const manifest = setupManifest({
       source: {
         dockerBuild: {},
       },
-      arch: architectures,
-    } as SDKImageInputSpec,
-  },
-  hardwareRequirements: {
-    arch: architectures,
-  },
-  alerts: {
-    install: null,
-    update: null,
-    uninstall: null,
-    restore: null,
-    start: null,
-    stop: null,
+      arch: ['x86_64', 'aarch64'],
+      emulateMissingAs: 'aarch64',
+    },
   },
   dependencies: {
     bitcoind: {

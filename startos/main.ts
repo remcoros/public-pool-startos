@@ -3,6 +3,7 @@ import { FileHelper, T } from '@start9labs/start-sdk'
 import { bitcoindMountpoint, envDefaults, uiPort } from './utils'
 import { envFile } from './file-models/env'
 import { store } from './file-models/store.json'
+import { i18n } from './i18n'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   /**
@@ -81,15 +82,15 @@ export const main = sdk.setupMain(async ({ effects }) => {
         cwd: '/public-pool',
       },
       ready: {
-        display: 'Stratum Server',
+        display: i18n('Stratum Server'),
         gracePeriod: 15_000,
         fn: () =>
           sdk.healthCheck.checkPortListening(
             effects,
             Number(envDefaults.STRATUM_PORT),
             {
-              successMessage: 'Stratum server is ready',
-              errorMessage: 'Stratum server is not ready',
+              successMessage: i18n('Stratum server is ready'),
+              errorMessage: i18n('Stratum server is not ready'),
             },
           ),
       },
@@ -101,11 +102,11 @@ export const main = sdk.setupMain(async ({ effects }) => {
         command: ['nginx', '-g', 'daemon off;'],
       },
       ready: {
-        display: 'Web Interface',
+        display: i18n('Web Interface'),
         fn: () =>
           sdk.healthCheck.checkPortListening(effects, uiPort, {
-            successMessage: 'The web interface is ready',
-            errorMessage: 'The web interface is not ready',
+            successMessage: i18n('The web interface is ready'),
+            errorMessage: i18n('The web interface is not ready'),
           }),
       },
       requires: [],
