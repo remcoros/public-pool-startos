@@ -1,7 +1,7 @@
 FROM node:24.16.0-bookworm-slim AS build
 
 # Public Pool repo does not use versions/tags yet, point directly to commit sha
-ARG PUBLIC_POOL_SHA=95565eeec41ebdc9eca7c9aa7413f7cded6342b8
+ARG PUBLIC_POOL_SHA=96a9202c11de2c6fc8d41155e2e779912a476dc7
 ARG PUBLIC_POOL_UI_SHA=00954f46866cc23c1b04d34a13ffb4f2cc8f9bbb
 
 # these are specified in Makefile
@@ -31,7 +31,7 @@ RUN \
 
 RUN \
     cd public-pool && \
-    npm i && \
+    npm ci && \
     npm run build
 
 RUN \
