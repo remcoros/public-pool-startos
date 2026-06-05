@@ -55,9 +55,9 @@ ifeq ($(ARCH),aarch64)
 else
 	mkdir -p docker-images
 	docker buildx build --tag start9/$(PKG_ID)/main:$(PKG_VERSION) \
-		--build-arg PLATFORM=arm64 \
+		--build-arg PLATFORM=amd64 \
 		--build-arg YQ_VERSION=$(YQ_VERSION) \
-		--build-arg YQ_SHA=$(YQ_SHA_ARM64) \
+		--build-arg YQ_SHA=$(YQ_SHA_AMD64) \
 		--platform=linux/amd64 -o type=docker,dest=docker-images/x86_64.tar .
 endif
 

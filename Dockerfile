@@ -31,7 +31,7 @@ RUN \
 
 RUN \
     cd public-pool && \
-    npm ci && \
+    npm i && \
     npm run build
 
 RUN \
