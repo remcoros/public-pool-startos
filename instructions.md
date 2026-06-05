@@ -42,3 +42,11 @@ Enable the new systemd service:
 Now exit the chroot environment. this will reboot StartOS! **Do NOT close the SSH window manually, actually type `exit` and let it reboot.**
 
     exit
+
+**NOTE:** do not use the .local or .onion address of this service for mining, use the IP address (and port 3333) of your StartOS device instead.
+
+To get the LAN IP address of your StartOS device, you can run the following command from another device on the same network:
+
+    ping -4 adjective-noun.local
+
+where `adjective-noun` is the name of your StartOS device you normally use to access the web interface.

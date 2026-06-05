@@ -1,8 +1,8 @@
 id: public-pool
 title: "Public Pool"
-version: 0.2.4
+version: 0.2.5
 release-notes: |  
-  * Add config option to override default RPC Timeout
+  * Update to the latest public-pool/public-pool-ui version
 license: GPL
 wrapper-repo: "https://github.com/remcoros/public-pool-startos"
 upstream-repo: "https://github.com/benjamin-wilson/public-pool"
@@ -72,7 +72,7 @@ interfaces:
 #      - tcp
 dependencies:
   bitcoind:
-    version: ">=26.0.0 <29.0.0"
+    version: ">=26.0.0 <31.0.0"
     requirement:
       type: "opt-in"
       how: "Use built-in Bitcoin Core (mainnet)"
@@ -83,7 +83,7 @@ dependencies:
       auto-configure:
         type: script
   bitcoind-testnet:
-    version: ">=26.0.0 <29.0.0"
+    version: ">=26.0.0 <31.0.0"
     requirement:
       type: "opt-in"
       how: "Use built-in Bitcoin Core (testnet4)"
