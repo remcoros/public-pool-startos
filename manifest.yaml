@@ -1,8 +1,10 @@
 id: public-pool
 title: "Public Pool"
-version: 0.2.5
+version: 0.2.6
 release-notes: |  
-  * Update to the latest public-pool/public-pool-ui version
+  * Update the Public Pool server backend to benjamin-wilson/public-pool 96a9202.
+  * Migrate PostgreSQL branch improvements back to the SQLite-based StartOS app.
+  * Remove the obsolete rpc-bitcoin package patch from the build.
 license: GPL
 wrapper-repo: "https://github.com/remcoros/public-pool-startos"
 upstream-repo: "https://github.com/benjamin-wilson/public-pool"
