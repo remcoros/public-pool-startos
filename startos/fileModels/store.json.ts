@@ -2,6 +2,7 @@ import { FileHelper, z } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 
 const shape = z.looseObject({
+  node: z.enum(['bitcoind', 'rbitcoin']).catch('bitcoind'),
   stratumDisplayAddress: z.string().nullable().catch(null),
   secureStratumDisplayAddress: z.string().nullable().catch(null),
 })

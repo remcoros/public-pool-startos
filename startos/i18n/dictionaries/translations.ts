@@ -2,6 +2,8 @@ import { LangDict } from './default'
 
 export default {
   es_ES: {
+    208: 'Nodo Bitcoin',
+    209: 'Elige el nodo que proporciona plantillas de minería.',
     // main.ts
     1: 'El servidor Stratum está listo',
     2: 'El servidor Stratum no está listo',
@@ -30,6 +32,8 @@ export default {
     300: 'Hay que activar ZMQ en Bitcoin para usarlo con Public Pool',
   },
   de_DE: {
+    208: 'Bitcoin-Knoten',
+    209: 'Wähle den Knoten für Mining-Vorlagen.',
     // main.ts
     1: 'Stratum-Server ist bereit',
     2: 'Stratum-Server ist nicht bereit',
@@ -58,6 +62,8 @@ export default {
     300: 'ZMQ muss in Bitcoin aktiviert sein, um es mit Public Pool zu verwenden',
   },
   pl_PL: {
+    208: 'Węzeł Bitcoin',
+    209: 'Wybierz węzeł dostarczający szablony wydobycia.',
     // main.ts
     1: 'Serwer Stratum jest gotowy',
     2: 'Serwer Stratum nie jest gotowy',
@@ -86,6 +92,8 @@ export default {
     300: 'Aby używać Bitcoina z Public Pool, trzeba włączyć w nim ZMQ',
   },
   fr_FR: {
+    208: 'Nœud Bitcoin',
+    209: 'Choisissez le nœud qui fournit les modèles de minage.',
     // main.ts
     1: 'Le serveur Stratum est prêt',
     2: "Le serveur Stratum n'est pas prêt",

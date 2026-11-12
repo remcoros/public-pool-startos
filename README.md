@@ -60,22 +60,22 @@ One volume, mounted into the stratum container at two points.
 
 The config is mounted **read-only and as a single file**, so the pool reads its settings but cannot rewrite them. The UI container mounts nothing at all — everything it needs is in the image.
 
-Bitcoin's data directory is additionally mounted read-only, which is how the pool reads its RPC cookie.
+The selected node's data volume is mounted read-only so the pool can read its RPC cookie. For rbitcoin, the cookie is at `datadir/rpc.cookie`; its RPC must be enabled and credentials generated.
 
 ## File Models
 
-Two models: the pool's own `.env`, and a small store for what the UI displays.
+Two models: the pool's own `.env`, and a store for the selected node and display addresses.
 
 | File         | Format | Modelled                | Written by                                   |
 | ------------ | ------ | ----------------------- | -------------------------------------------- |
 | `.env`       | env    | Yes — `FileHelper.env`  | Every init, `main`, and the Configure action |
 | `store.json` | JSON   | Yes — `FileHelper.json` | Init, and the Configure action               |
 
-**Enforced** — rewritten whenever the package writes: the RPC timeout, the API and stratum ports, the API's plaintext flag, the cookie file path, the network, and `DEV_FEE_ADDRESS`.
+**Enforced** — rewritten whenever the package writes: the RPC timeout, the API and stratum ports, the API's plaintext flag, the network and `DEV_FEE_ADDRESS`.
 
-**Derived** — the Bitcoin RPC and ZMQ endpoints, written by `main` from bridge addresses before the stratum daemon reads the file. Each is a separate reactive subscription, so a bitcoind update or restart does not restart the pool — only an actual address change does.
+**Derived** — the selected node’s RPC endpoint and cookie path, and the Bitcoin ZMQ endpoint, written by `main` from bridge addresses before the stratum daemon reads the file. Each is a separate reactive subscription, so a bitcoind update or restart does not restart the pool — only an actual address change does.
 
-**Yours** — the pool identifier stamped into coinbase transactions, and the two display addresses.
+**Yours** — the node selection, the pool identifier stamped into coinbase transactions, and the two display addresses.
 
 ### `DEV_FEE_ADDRESS` is pinned empty, deliberately
 
@@ -85,15 +85,14 @@ It is named in the model rather than left out precisely because a file model **p
 
 ## Dependencies
 
-One, and it is required.
+One of two optional dependencies is active, selected in Configure. Existing installations default to Bitcoin Core.
 
-| Dependency | Kind      | Health check |
-| ---------- | --------- | ------------ |
-| `bitcoind` | `running` | `bitcoind`   |
+| Dependency | Kind | Health check | Connection |
+| ---------- | ---- | ------------ | ---------- |
+| `bitcoind` (Bitcoin Core) | `running` | `bitcoind` | RPC cookie and ZMQ block notifications |
+| `rbitcoin` >= 0.9.2:0 | `running` | `rpc` | RPC cookie and 500 ms mining-info polling |
 
-**Bitcoin must have ZMQ enabled**, which is how the pool learns about new blocks. The package raises a `critical` task against Bitcoin asking for it, registered so that it **re-raises whenever the setting stops matching** rather than prompting once.
-
-**The pool refuses to start if Bitcoin is not yet reachable** on the internal network, with a message saying so, rather than starting against an address that does not resolve. It also watches Bitcoin's RPC cookie file, so a cookie rotation is picked up rather than leaving the pool authenticating with a stale one.
+Bitcoin needs ZMQ enabled; a critical task requests it. For rbitcoin, enable JSON-RPC and generate RPC credentials in rbitcoin. Public Pool watches the selected cookie for rotation, and resolves the selected RPC bridge address at startup. It refuses to start when the address cannot be resolved.
 
 ## Network Access and Interfaces
 
@@ -110,9 +109,9 @@ Two interfaces on one host, so they can share a domain.
 
 ## Installation and First-Run Flow
 
-Install seeds the config and picks display addresses from the `.local` hostname, falling back to a private LAN address. A `critical` task is raised against **Bitcoin**, not this package: enable ZMQ.
+Install seeds the config and picks display addresses from the `.local` hostname, falling back to a private LAN address. For Bitcoin, a critical task requests ZMQ. For rbitcoin, enable JSON-RPC and generate credentials in rbitcoin.
 
-Once Bitcoin is configured and synced, point a miner at the stratum address using **your own Bitcoin address as the username** — that is how Public Pool identifies a miner and where a found block pays out. Nothing on this side needs a credential.
+Once the selected node is configured and synced, point a miner at the stratum address using **your own Bitcoin address as the username** — that is how Public Pool identifies a miner and where a found block pays out. Nothing on this side needs a credential.
 
 ## Actions
 
@@ -120,7 +119,7 @@ One action.
 
 ### Configure
 
-The pool identifier, and the plain and TLS stratum addresses for the web UI to display. The pinned UI shows only the plain one; the TLS one is stored for a later UI (see `UPDATING.md`).
+The node implementation, pool identifier, and plain and TLS stratum addresses for the web UI to display. The pinned UI shows only the plain one; the TLS one is stored for a later UI (see `UPDATING.md`).
 
 - **What it changes:** `POOL_IDENTIFIER` in `.env`, and both display addresses in `store.json`.
 - **Cost:** seconds, then a restart.
@@ -134,9 +133,9 @@ One task, and it is on Bitcoin rather than here.
 
 | Task                     | On         | Severity   | Raised when                       | Cleared when             |
 | ------------------------ | ---------- | ---------- | --------------------------------- | ------------------------ |
-| Bitcoin's Auto-Configure | `bitcoind` | `critical` | Bitcoin does not have ZMQ enabled | Bitcoin's settings match |
+| Bitcoin's Auto-Configure | `bitcoind` | `critical` | Bitcoin is selected and does not have ZMQ enabled | Bitcoin's settings match |
 
-Registered so it re-raises if Bitcoin's configuration later stops matching — for example after restoring Bitcoin from a backup taken without ZMQ. `critical` because without ZMQ the pool never learns a block was found and cannot issue new work.
+Registered so it re-raises if Bitcoin's configuration later stops matching — for example after restoring Bitcoin from a backup taken without ZMQ. For rbitcoin, the pool polls instead of using ZMQ.
 
 ## Health Checks
 
@@ -149,7 +148,7 @@ Two checks, one per daemon, and they are independent — the UI does not wait on
 
 A `stratum` failure after the grace period is the pool itself: most often Bitcoin's RPC refusing the cookie, or a `.env` value it rejects. Both are named in the service logs.
 
-**A green stratum check does not mean miners are mining.** It means the port is open. Miners connecting and failing to get work points at Bitcoin — unsynced, or ZMQ not actually enabled — rather than at the pool.
+**A green stratum check does not mean miners are mining.** It means the port is open. Miners failing to get work may indicate an unsynced node, an unavailable RPC, or, for Bitcoin, disabled ZMQ.
 
 ## Backups and Restore
 
@@ -162,12 +161,13 @@ The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No du
 ## Limitations and Differences
 
 1. **The developer fee is pinned off.** The key is named in the model specifically so a value planted on the volume cannot survive.
-2. **Bitcoin is required and must have ZMQ enabled**, enforced by a re-raising `critical` task.
-3. **The pool refuses to start while Bitcoin is unreachable** rather than starting against a dead address.
+2. **One selected node is required.** Bitcoin needs ZMQ; rbitcoin needs JSON-RPC and credentials.
+3. **The pool refuses to start when the selected node’s bridge address is unavailable.** A resolved address does not prove RPC is working.
 4. **Mainnet only.**
 5. **The UI's displayed Stratum address is patched into the built bundle at start** — it is display text, not a binding.
 6. **The pool's `.env` is mounted read-only** and is not editable from inside the container.
 7. **No riscv64 build.** x86_64 and aarch64 only.
+8. The pinned Public Pool detects new blocks by increased height. A same-height chain reorganization does not trigger a new-block event, including in polling mode.
 
 ---
 
@@ -189,7 +189,8 @@ file_models:
   - store.json
 startos_managed_env_vars: [] # the pool is configured by .env, not container env
 dependencies:
-  - bitcoind # required, running; must have ZMQ enabled
+  - bitcoind # optional, active when selected; ZMQ required
+  - rbitcoin # optional, active when selected; RPC required
 interfaces:
   ui: { type: ui, port: 80 }
   stratum: { type: api, port: 3333 } # plus StartOS-terminated TLS on a second port

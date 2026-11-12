@@ -1,7 +1,6 @@
 import { sdk } from './sdk'
-import { FileHelper } from '@start9labs/start-sdk'
+import { FileHelper, T } from '@start9labs/start-sdk'
 import { readdir, readFile, writeFile } from 'fs/promises'
-import { manifest as bitcoinManifest } from 'bitcoin-core-startos/startos/manifest'
 import {
   bitcoindMountpoint,
   getBitcoindBridge,
@@ -19,22 +18,42 @@ export const main = sdk.setupMain(async ({ effects }) => {
   const depResult = await dependencies.check(effects)
   depResult.throwIfNotSatisfied()
 
-  // Resolve bitcoind's RPC + ZMQ endpoints over the LXC bridge (the static
-  // bitcoind.startos no longer resolves) and write them into .env before the
-  // stratum daemon reads it.
-  const bitcoind = await getBitcoindBridge(effects)
-  if (!bitcoind)
+  const node = (await store.read((s) => s.node).const(effects)) ?? 'bitcoind'
+  const bitcoin = node === 'bitcoind' ? await getBitcoindBridge(effects) : null
+  const rbitcoin =
+    node === 'rbitcoin'
+      ? await sdk.host
+          .getBridgeAddress(effects, {
+            packageId: 'rbitcoin',
+            hostId: 'rpc',
+            internalPort: 8332,
+            ssl: false,
+          })
+          .const()
+      : null
+  if ((node === 'bitcoind' && !bitcoin) || (node === 'rbitcoin' && !rbitcoin))
     throw new Error(
       i18n(
         'Bitcoin is not yet reachable on the internal network. Ensure it is installed and running.',
       ),
     )
+  const [rpcHost, rpcPort] =
+    node === 'bitcoind'
+      ? [bitcoin!.rpcHost, bitcoin!.rpcPort]
+      : rbitcoin!.split(':')
+  const cookiePath =
+    node === 'bitcoind'
+      ? '/mnt/bitcoind/.cookie'
+      : '/mnt/bitcoind/datadir/rpc.cookie'
   await envFile.merge(
     effects,
     {
-      BITCOIN_RPC_URL: `http://${bitcoind.rpcHost}`,
-      BITCOIN_RPC_PORT: bitcoind.rpcPort,
-      BITCOIN_ZMQ_HOST: `tcp://${bitcoind.zmqHost}:${bitcoind.zmqPort}`,
+      BITCOIN_RPC_URL: `http://${rpcHost}`,
+      BITCOIN_RPC_PORT: rpcPort,
+      BITCOIN_RPC_COOKIEFILE: cookiePath,
+      BITCOIN_ZMQ_HOST: bitcoin
+        ? `tcp://${bitcoin.zmqHost}:${bitcoin.zmqPort}`
+        : '',
     },
     { allowWriteAfterConst: true },
   )
@@ -57,8 +76,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
         readonly: true,
         type: 'file',
       })
-      .mountDependency<typeof bitcoinManifest>({
-        dependencyId: 'bitcoind',
+      .mountDependency<T.SDKManifest>({
+        dependencyId: node,
         volumeId: 'main',
         subpath: null,
         mountpoint: bitcoindMountpoint,
@@ -67,9 +86,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     'stratum',
   )
 
-  await FileHelper.string(
-    `${await stratumSub.rootfs}${bitcoindMountpoint}/.cookie`,
-  )
+  await FileHelper.string(`${await stratumSub.rootfs}${cookiePath}`)
     .read()
     .const(effects)
 

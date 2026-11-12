@@ -8,6 +8,12 @@ import { i18n } from '../i18n'
 const { InputSpec, Value } = sdk
 
 export const inputSpec = InputSpec.of({
+  node: Value.select({
+    name: i18n('Bitcoin node'),
+    description: i18n('Choose the node that supplies mining templates.'),
+    values: { bitcoind: 'Bitcoin Core', rbitcoin: 'rbitcoin' },
+    default: 'bitcoind',
+  }),
   POOL_IDENTIFIER: Value.text({
     name: i18n('Pool Identifier'),
     description: i18n(
@@ -114,6 +120,7 @@ export const config = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async ({ effects }) => ({
+    node: (await store.read().once())?.node ?? 'bitcoind',
     POOL_IDENTIFIER: (await envFile.read().once())?.POOL_IDENTIFIER,
     poolDisplayUrl:
       (await store.read((s) => s.stratumDisplayAddress).once()) || undefined,
@@ -129,6 +136,7 @@ export const config = sdk.Action.withInput(
         POOL_IDENTIFIER: input.POOL_IDENTIFIER,
       }),
       store.merge(effects, {
+        node: input.node,
         stratumDisplayAddress: input.poolDisplayUrl,
         secureStratumDisplayAddress: input.securePoolDisplayUrl,
       }),

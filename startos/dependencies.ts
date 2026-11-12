@@ -2,11 +2,14 @@ import { autoconfig } from 'bitcoin-core-startos/startos/actions/config/autoconf
 import { i18n } from './i18n'
 import { bitcoindDescription } from './manifest/i18n'
 import { sdk } from './sdk'
+import { store } from './fileModels/store.json'
 
-const bitcoind = sdk.Dependency.required('bitcoind', {
+const bitcoind = sdk.Dependency.optional('bitcoind', {
+  enabled: async ({ effects }) =>
+    (await store.read((s) => s.node).const(effects)) !== 'rbitcoin',
   description: bitcoindDescription,
   metadata: {
-    title: 'Bitcoin',
+    title: 'Bitcoin Core',
     icon: 'https://raw.githubusercontent.com/Start9Labs/bitcoin-core-startos/feec0b1dae42961a257948fe39b40caf8672fce1/dep-icon.svg',
   },
   versionRange:
@@ -25,4 +28,19 @@ const bitcoind = sdk.Dependency.required('bitcoind', {
   })
 })
 
-export const dependencies = sdk.Dependencies.of().addDependency(bitcoind)
+const rbitcoin = sdk.Dependency.optional('rbitcoin', {
+  description: bitcoindDescription,
+  metadata: {
+    title: 'rbitcoin',
+    icon: 'https://raw.githubusercontent.com/remcoros/rbitcoin-startos/dc2eaf1012618940b4743c816c9b036bbb720953/icon.png',
+  },
+  versionRange: '>=0.9.2:0',
+  kind: 'running',
+  healthChecks: ['rpc'],
+  enabled: async ({ effects }) =>
+    (await store.read((s) => s.node).const(effects)) === 'rbitcoin',
+})
+
+export const dependencies = sdk.Dependencies.of()
+  .addDependency(bitcoind)
+  .addDependency(rbitcoin)

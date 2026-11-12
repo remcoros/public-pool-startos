@@ -15,6 +15,9 @@ const dict = {
   'Stratum Server': 102,
   'Where your miners connect': 103,
 
+  'Bitcoin node': 208,
+  'Choose the node that supplies mining templates.': 209,
+
   // actions/config.ts
   'Pool Identifier': 200,
   'Written into the coinbase transaction of every block this pool builds, so it becomes public on the blockchain if one of your miners finds a block. If it is too long to fit, the pool leaves it out.': 201,

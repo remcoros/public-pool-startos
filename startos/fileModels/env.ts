@@ -12,9 +12,7 @@ const shape = z
     // these when bitcoind is reachable, so they stay absent until it resolves.
     BITCOIN_RPC_URL: z.string().optional().catch(undefined),
     BITCOIN_RPC_PORT: z.string().optional().catch(undefined),
-    BITCOIN_RPC_COOKIEFILE: z
-      .literal('/mnt/bitcoind/.cookie')
-      .catch('/mnt/bitcoind/.cookie'),
+    BITCOIN_RPC_COOKIEFILE: z.string().catch('/mnt/bitcoind/.cookie'),
     BITCOIN_ZMQ_HOST: z.string().optional().catch(undefined),
     NETWORK: z.literal('mainnet').catch('mainnet'),
     // Pinned empty, not omitted. Upstream splits the coinbase 1.5%/98.5% with
