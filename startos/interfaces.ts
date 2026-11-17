@@ -34,14 +34,10 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   // LAN gateways; with secure: null the OS would expose only the TLS port there.
   const stratumMultiOrigin = await multiHost.bindPort(stratumPort, {
     protocol: null,
-    addSsl: {
-      preferredExternalPort: 4333,
-      alpn: null,
-      addXForwardedHeaders: false,
-      auth: null,
-    },
+    addSsl: { preferredExternalPort: 4333, alpn: null },
     preferredExternalPort: stratumPort,
     secure: { ssl: false },
+    proxy: null,
   })
   const stratum = sdk.createInterface(effects, {
     name: i18n('Stratum Server'),

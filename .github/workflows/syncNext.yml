@@ -13,7 +13,7 @@ name: Sync next
 # or the next merge back re-introduces the stale copy.
 on:
   push:
-    branches: ['master']
+    branches: ['rbitcoin']
   workflow_dispatch:
 
 jobs:

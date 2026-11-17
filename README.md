@@ -12,7 +12,9 @@
 [Public Pool](https://github.com/benjamin-wilson/public-pool) is a solo Bitcoin mining pool server: point your miners at it and they build blocks against your own node, with the full reward going to whoever finds one. This package wires it to the Bitcoin on this server, pins the developer fee to nothing, and shows your miners the address to point at.
 
 - **Upstream repo:** <https://github.com/benjamin-wilson/public-pool>
-- **Wrapper repo:** <https://github.com/Start9Labs/public-pool-startos>
+- **Wrapper repo:** <https://github.com/remcoros/public-pool-startos/tree/rbitcoin>
+
+This custom package uses the `rbitcoin` version flavor and is maintained on the `rbitcoin` branch. Configure still offers both Bitcoin Core and rbitcoin; Bitcoin Core remains the default. It keeps the `public-pool` service ID and can migrate existing unflavored installations through the retained configuration and task-cleanup migrations, preserving their data and settings.
 
 ---
 

@@ -9,6 +9,7 @@
 - A **Web UI** interface — the Public Pool dashboard for watching workers, hashrate, and block discoveries.
 - A **Stratum Server** interface — plain TCP on port 3333 and TLS (`stratum+tls`) on port 4333 — the endpoint your mining hardware points at.
 - Choose Bitcoin Core or rbitcoin as the node supplying block templates. The selected node’s RPC connection is configured for you.
+- This package is maintained by [remcoros](https://github.com/remcoros/public-pool-startos/tree/rbitcoin) and uses the `rbitcoin` version flavor. The flavor identifies the package; choose the node separately in Configure.
 
 ## Getting set up
 
