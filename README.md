@@ -60,7 +60,7 @@ One volume, mounted into the stratum container at two points.
 
 The config is mounted **read-only and as a single file**, so the pool reads its settings but cannot rewrite them. The UI container mounts nothing at all — everything it needs is in the image.
 
-Bitcoin's data directory is additionally mounted read-only, which is how the pool reads its RPC cookie.
+Bitcoin's `public` volume is additionally mounted read-only at `/mnt/bitcoind`, which is how the pool reads its RPC cookie; Bitcoin's data directory and wallets are not visible to it.
 
 ## File Models
 

@@ -1,23 +1,21 @@
-import { VersionInfo } from '@start9labs/start-sdk'
-import { sdk } from '../sdk'
+import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.2.5:26',
+  version: '0.2.5:27',
   releaseNotes: {
-    en_US: 'StartOS package improvements; no change to Public Pool.',
-    es_ES: 'Mejoras en el paquete de StartOS; sin cambios en Public Pool.',
-    de_DE: 'Verbesserungen am StartOS-Paket; keine Änderungen an Public Pool.',
-    pl_PL: 'Ulepszenia pakietu StartOS; bez zmian w Public Pool.',
+    en_US:
+      "Update Bitcoin first: Public Pool can now read only Bitcoin's RPC credential, not its data directory or wallets.",
+    es_ES:
+      'Actualiza Bitcoin primero: Public Pool ahora solo puede leer la credencial RPC de Bitcoin, no su directorio de datos ni sus billeteras.',
+    de_DE:
+      'Aktualisiere zuerst Bitcoin: Public Pool kann jetzt nur noch die RPC-Zugangsdaten von Bitcoin lesen, nicht sein Datenverzeichnis oder seine Wallets.',
+    pl_PL:
+      'Najpierw zaktualizuj Bitcoin: Public Pool może teraz odczytać tylko poświadczenie RPC Bitcoina, a nie jego katalog danych ani portfele.',
     fr_FR:
-      'Améliorations du paquet StartOS ; aucun changement pour Public Pool.',
+      "Mettez d'abord Bitcoin à jour : Public Pool ne peut désormais lire que l'identifiant RPC de Bitcoin, et non son répertoire de données ni ses portefeuilles.",
   },
   migrations: {
-    up: async ({ effects }) => {
-      await sdk.action.clearTask(
-        effects,
-        'bitcoind:config',
-        'bitcoind:other-config',
-      )
-    },
+    up: async () => {},
+    down: IMPOSSIBLE,
   },
 })

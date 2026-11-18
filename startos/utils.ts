@@ -1,5 +1,6 @@
 import { T } from '@start9labs/start-sdk'
 import {
+  rpcCookieName,
   rpcHostId as btcRpcHostId,
   rpcPort as btcRpcPort,
   zmqHostId as btcZmqHostId,
@@ -10,6 +11,7 @@ import { sdk } from './sdk'
 export const uiPort = 80
 export const stratumPort = 3333
 export const bitcoindMountpoint = '/mnt/bitcoind'
+export const bitcoindCookie = `${bitcoindMountpoint}/${rpcCookieName}`
 
 /**
  * bitcoind's RPC and ZMQ-block endpoints over the LXC bridge, which main writes
