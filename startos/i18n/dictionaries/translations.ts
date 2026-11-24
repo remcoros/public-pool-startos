@@ -2,6 +2,7 @@ import { LangDict } from './default'
 
 export default {
   es_ES: {
+    210: 'Cambiar de red reinicia el pool. Configura los mineros con una dirección de la red seleccionada.',
     208: 'Nodo Bitcoin',
     209: 'Elige el nodo que proporciona plantillas de minería.',
     // main.ts
@@ -32,6 +33,7 @@ export default {
     300: 'Hay que activar ZMQ en Bitcoin para usarlo con Public Pool',
   },
   de_DE: {
+    210: 'Ein Netzwerkwechsel startet den Pool neu. Konfiguriere die Miner mit einer Adresse des ausgewählten Netzwerks.',
     208: 'Bitcoin-Knoten',
     209: 'Wähle den Knoten für Mining-Vorlagen.',
     // main.ts
@@ -62,6 +64,7 @@ export default {
     300: 'ZMQ muss in Bitcoin aktiviert sein, um es mit Public Pool zu verwenden',
   },
   pl_PL: {
+    210: 'Zmiana sieci uruchamia pulę ponownie. Skonfiguruj koparki z adresem wybranej sieci.',
     208: 'Węzeł Bitcoin',
     209: 'Wybierz węzeł dostarczający szablony wydobycia.',
     // main.ts
@@ -92,6 +95,7 @@ export default {
     300: 'Aby używać Bitcoina z Public Pool, trzeba włączyć w nim ZMQ',
   },
   fr_FR: {
+    210: 'Changer de réseau redémarre le pool. Configurez les mineurs avec une adresse du réseau sélectionné.',
     208: 'Nœud Bitcoin',
     209: 'Choisissez le nœud qui fournit les modèles de minage.',
     // main.ts

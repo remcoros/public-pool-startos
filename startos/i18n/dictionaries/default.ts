@@ -15,6 +15,7 @@ const dict = {
   'Stratum Server': 102,
   'Where your miners connect': 103,
 
+  'Changing networks restarts the pool. Configure miners with an address for the selected network.': 210,
   'Bitcoin node': 208,
   'Choose the node that supplies mining templates.': 209,
 

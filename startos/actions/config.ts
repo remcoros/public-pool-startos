@@ -11,8 +11,15 @@ export const inputSpec = InputSpec.of({
   node: Value.select({
     name: i18n('Bitcoin node'),
     description: i18n('Choose the node that supplies mining templates.'),
-    values: { bitcoind: 'Bitcoin Core', rbitcoin: 'rbitcoin' },
-    default: 'bitcoind',
+    warning: i18n(
+      'Changing networks restarts the pool. Configure miners with an address for the selected network.',
+    ),
+    values: {
+      bitcoind: 'Bitcoin Core',
+      rbitcoin: 'rbitcoin',
+      'bitcoind-testnet': 'Bitcoin Testnet4',
+    },
+    default: 'rbitcoin',
   }),
   POOL_IDENTIFIER: Value.text({
     name: i18n('Pool Identifier'),
@@ -120,7 +127,7 @@ export const config = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async ({ effects }) => ({
-    node: (await store.read().once())?.node ?? 'bitcoind',
+    node: (await store.read().once())?.node ?? 'rbitcoin',
     POOL_IDENTIFIER: (await envFile.read().once())?.POOL_IDENTIFIER,
     poolDisplayUrl:
       (await store.read((s) => s.stratumDisplayAddress).once()) || undefined,

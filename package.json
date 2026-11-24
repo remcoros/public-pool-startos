@@ -2,7 +2,8 @@
   "name": "public-pool-startos",
   "dependencies": {
     "@start9labs/start-sdk": "4.1.0",
-    "bitcoin-core-startos": "github:Start9Labs/bitcoin-core-startos#next/28.x"
+    "bitcoin-core-startos": "github:Start9Labs/bitcoin-core-startos#6255297b2896870c189155754e62d9b4cb3c89ff",
+    "bitcoin-core-testnet-startos": "github:remcoros/bitcoind-testnet4-startos#e655655b5fde7f171f488429774ff8cc5f67ad96"
   },
   "overrides": {
     "@start9labs/start-sdk": "$@start9labs/start-sdk"

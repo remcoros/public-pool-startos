@@ -1,9 +1,12 @@
 import { sdk } from './sdk'
 import { FileHelper, T } from '@start9labs/start-sdk'
 import { readdir, readFile, writeFile } from 'fs/promises'
+import { rpcVolumeId as bitcoinRpcVolumeId } from 'bitcoin-core-startos/startos/utils'
+import { rpcVolumeId as testnetRpcVolumeId } from 'bitcoin-core-testnet-startos/startos/utils'
 import {
   bitcoindMountpoint,
   getBitcoindBridge,
+  getTestnetBridge,
   stratumPort,
   uiPort,
 } from './utils'
@@ -18,8 +21,13 @@ export const main = sdk.setupMain(async ({ effects }) => {
   const depResult = await dependencies.check(effects)
   depResult.throwIfNotSatisfied()
 
-  const node = (await store.read((s) => s.node).const(effects)) ?? 'bitcoind'
-  const bitcoin = node === 'bitcoind' ? await getBitcoindBridge(effects) : null
+  const node = (await store.read((s) => s.node).const(effects)) ?? 'rbitcoin'
+  const bitcoin =
+    node === 'bitcoind'
+      ? await getBitcoindBridge(effects)
+      : node === 'bitcoind-testnet'
+        ? await getTestnetBridge(effects)
+        : null
   const rbitcoin =
     node === 'rbitcoin'
       ? await sdk.host
@@ -31,23 +39,24 @@ export const main = sdk.setupMain(async ({ effects }) => {
           })
           .const()
       : null
-  if ((node === 'bitcoind' && !bitcoin) || (node === 'rbitcoin' && !rbitcoin))
+  if ((node !== 'rbitcoin' && !bitcoin) || (node === 'rbitcoin' && !rbitcoin))
     throw new Error(
       i18n(
         'Bitcoin is not yet reachable on the internal network. Ensure it is installed and running.',
       ),
     )
   const [rpcHost, rpcPort] =
-    node === 'bitcoind'
+    node !== 'rbitcoin'
       ? [bitcoin!.rpcHost, bitcoin!.rpcPort]
       : rbitcoin!.split(':')
   const cookiePath =
-    node === 'bitcoind'
-      ? '/mnt/bitcoind/.cookie'
-      : '/mnt/bitcoind/datadir/rpc.cookie'
+    node === 'rbitcoin'
+      ? '/mnt/bitcoind/datadir/rpc.cookie'
+      : '/mnt/bitcoind/.cookie'
   await envFile.merge(
     effects,
     {
+      NETWORK: node === 'bitcoind-testnet' ? 'testnet' : 'mainnet',
       BITCOIN_RPC_URL: `http://${rpcHost}`,
       BITCOIN_RPC_PORT: rpcPort,
       BITCOIN_RPC_COOKIEFILE: cookiePath,
@@ -65,7 +74,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     sdk.Mounts.of()
       .mountVolume({
         volumeId: 'main',
-        subpath: 'mainnet',
+        subpath: node === 'bitcoind-testnet' ? 'testnet4' : 'mainnet',
         mountpoint: '/public-pool/DB',
         readonly: false,
       })
@@ -78,7 +87,12 @@ export const main = sdk.setupMain(async ({ effects }) => {
       })
       .mountDependency<T.SDKManifest>({
         dependencyId: node,
-        volumeId: 'main',
+        volumeId:
+          node === 'rbitcoin'
+            ? 'main'
+            : node === 'bitcoind'
+              ? bitcoinRpcVolumeId
+              : testnetRpcVolumeId,
         subpath: null,
         mountpoint: bitcoindMountpoint,
         readonly: true,

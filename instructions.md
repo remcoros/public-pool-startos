@@ -8,13 +8,13 @@
 
 - A **Web UI** interface — the Public Pool dashboard for watching workers, hashrate, and block discoveries.
 - A **Stratum Server** interface — plain TCP on port 3333 and TLS (`stratum+tls`) on port 4333 — the endpoint your mining hardware points at.
-- Choose Bitcoin Core or rbitcoin as the node supplying block templates. The selected node’s RPC connection is configured for you.
+- Choose Bitcoin Core, rbitcoin, or Bitcoin Testnet4 as the node supplying block templates. The selected node’s RPC connection is configured for you.
 - This package is maintained by [remcoros](https://github.com/remcoros/public-pool-startos/tree/rbitcoin) and uses the `rbitcoin` version flavor. The flavor identifies the package; choose the node separately in Configure.
 
 ## Getting set up
 
-1. Install and sync a Bitcoin node. For Bitcoin Core, complete its **Auto Configure** task to enable ZMQ. For rbitcoin, enable **JSON-RPC** in **Client APIs** and generate RPC credentials.
-2. Open Public Pool’s **Configure** action and select the installed node under **Bitcoin node**. Bitcoin Core is the default. Public Pool connects to the selected node when it is running and ready.
+1. Install and sync a Bitcoin node. For Bitcoin Core or Bitcoin Testnet4, complete its **Auto Configure** task to enable ZMQ. For rbitcoin, enable **JSON-RPC** in **Client APIs** and generate RPC credentials.
+2. Open Public Pool’s **Configure** action and select the installed node under **Bitcoin node**. rbitcoin is the default. When selecting Bitcoin Testnet4, configure miners with a testnet payout address; the pool keeps Testnet4 statistics separate from mainnet. Public Pool connects to the selected node when it is running and ready.
 3. Open the **Configure** action and set:
    - **Pool Identifier** — the string that appears in your coinbase transactions (default `Public-Pool on StartOS`).
    - **Server Display URL** — which of the Stratum interface's plain-TCP addresses to show on the dashboard as the connection URL for miners. Defaults to the device's `.local` hostname.

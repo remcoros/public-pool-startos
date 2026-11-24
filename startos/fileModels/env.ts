@@ -14,7 +14,7 @@ const shape = z
     BITCOIN_RPC_PORT: z.string().optional().catch(undefined),
     BITCOIN_RPC_COOKIEFILE: z.string().catch('/mnt/bitcoind/.cookie'),
     BITCOIN_ZMQ_HOST: z.string().optional().catch(undefined),
-    NETWORK: z.literal('mainnet').catch('mainnet'),
+    NETWORK: z.enum(['mainnet', 'testnet']).catch('mainnet'),
     // Pinned empty, not omitted. Upstream splits the coinbase 1.5%/98.5% with
     // whatever address this holds once a miner is at or above 50 TH/s, and never
     // checks it is an address at all — a junk value makes every job throw. The

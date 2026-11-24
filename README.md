@@ -14,7 +14,7 @@
 - **Upstream repo:** <https://github.com/benjamin-wilson/public-pool>
 - **Wrapper repo:** <https://github.com/remcoros/public-pool-startos/tree/rbitcoin>
 
-This custom package uses the `rbitcoin` version flavor and is maintained on the `rbitcoin` branch. Configure still offers both Bitcoin Core and rbitcoin; Bitcoin Core remains the default. It keeps the `public-pool` service ID and can migrate existing unflavored installations through the retained configuration and task-cleanup migrations, preserving their data and settings.
+This custom package uses the `rbitcoin` version flavor and is maintained on the `rbitcoin` branch. Configure offers rbitcoin, Bitcoin Core, and Bitcoin Testnet4; rbitcoin is the default. It keeps the `public-pool` service ID and can migrate existing unflavored installations through the retained configuration and task-cleanup migrations, preserving their data and settings.
 
 ---
 
@@ -57,12 +57,12 @@ One volume, mounted into the stratum container at two points.
 
 | Volume | Mount Point                                       | Purpose                                        |
 | ------ | ------------------------------------------------- | ---------------------------------------------- |
-| `main` | its `mainnet/` at `/public-pool/DB`               | The pool database: miners, shares, and history |
+| `main` | its `mainnet/` or `testnet4/` at `/public-pool/DB`               | The pool database: miners, shares, and history |
 | `main` | its `.env` at `/public-pool/.env`, read-only file | The pool's configuration                       |
 
 The config is mounted **read-only and as a single file**, so the pool reads its settings but cannot rewrite them. The UI container mounts nothing at all — everything it needs is in the image.
 
-The selected node's data volume is mounted read-only so the pool can read its RPC cookie. For rbitcoin, the cookie is at `datadir/rpc.cookie`; its RPC must be enabled and credentials generated.
+Bitcoin Core and Bitcoin Testnet4 publish their RPC cookie in a dedicated read-only `public` volume; their data directories and wallets are not mounted. rbitcoin's `main` volume is mounted read-only for `datadir/rpc.cookie`; enable its RPC and generate credentials.
 
 ## File Models
 
@@ -73,9 +73,9 @@ Two models: the pool's own `.env`, and a store for the selected node and display
 | `.env`       | env    | Yes — `FileHelper.env`  | Every init, `main`, and the Configure action |
 | `store.json` | JSON   | Yes — `FileHelper.json` | Init, and the Configure action               |
 
-**Enforced** — rewritten whenever the package writes: the RPC timeout, the API and stratum ports, the API's plaintext flag, the network and `DEV_FEE_ADDRESS`.
+**Enforced** — rewritten whenever the package writes: the RPC timeout, the API and stratum ports, the API's plaintext flag, `DEV_FEE_ADDRESS`.
 
-**Derived** — the selected node’s RPC endpoint and cookie path, and the Bitcoin ZMQ endpoint, written by `main` from bridge addresses before the stratum daemon reads the file. Each is a separate reactive subscription, so a bitcoind update or restart does not restart the pool — only an actual address change does.
+**Derived** — the network, selected node’s RPC endpoint and cookie path, and the Bitcoin ZMQ endpoint, written by `main` from bridge addresses before the stratum daemon reads the file. Each is a separate reactive subscription, so a bitcoind update or restart does not restart the pool — only an actual address change does.
 
 **Yours** — the node selection, the pool identifier stamped into coinbase transactions, and the two display addresses.
 
@@ -87,14 +87,15 @@ It is named in the model rather than left out precisely because a file model **p
 
 ## Dependencies
 
-One of two optional dependencies is active, selected in Configure. Existing installations default to Bitcoin Core.
+One of three optional dependencies is active, selected in Configure. The default is rbitcoin; an existing selection is preserved.
 
 | Dependency | Kind | Health check | Connection |
 | ---------- | ---- | ------------ | ---------- |
 | `bitcoind` (Bitcoin Core) | `running` | `bitcoind` | RPC cookie and ZMQ block notifications |
+| `bitcoind-testnet` >= 31.2:1 | `running` | `bitcoind`, `sync-progress` | Testnet4 RPC cookie and ZMQ block notifications |
 | `rbitcoin` >= 0.9.2:0 | `running` | `rpc` | RPC cookie and 500 ms mining-info polling |
 
-Bitcoin needs ZMQ enabled; a critical task requests it. For rbitcoin, enable JSON-RPC and generate RPC credentials in rbitcoin. Public Pool watches the selected cookie for rotation, and resolves the selected RPC bridge address at startup. It refuses to start when the address cannot be resolved.
+Bitcoin needs ZMQ enabled; a critical task requests it. For Bitcoin Testnet4, ZMQ is also enabled by a critical task. For rbitcoin, enable JSON-RPC and generate RPC credentials in rbitcoin. Public Pool watches the selected cookie for rotation, and resolves the selected RPC bridge address at startup. It refuses to start when the address cannot be resolved.
 
 ## Network Access and Interfaces
 
@@ -111,7 +112,7 @@ Two interfaces on one host, so they can share a domain.
 
 ## Installation and First-Run Flow
 
-Install seeds the config and picks display addresses from the `.local` hostname, falling back to a private LAN address. For Bitcoin, a critical task requests ZMQ. For rbitcoin, enable JSON-RPC and generate credentials in rbitcoin.
+Install seeds the config and picks display addresses from the `.local` hostname, falling back to a private LAN address. For Bitcoin, a critical task requests ZMQ. For Bitcoin Testnet4, ZMQ is also enabled by a critical task. For rbitcoin, enable JSON-RPC and generate credentials in rbitcoin.
 
 Once the selected node is configured and synced, point a miner at the stratum address using **your own Bitcoin address as the username** — that is how Public Pool identifies a miner and where a found block pays out. Nothing on this side needs a credential.
 
@@ -131,11 +132,11 @@ The node implementation, pool identifier, and plain and TLS stratum addresses fo
 
 ## Tasks
 
-One task, and it is on Bitcoin rather than here.
+A critical task is raised on the selected Bitcoin Core or Bitcoin Testnet4 service when ZMQ is disabled.
 
 | Task                     | On         | Severity   | Raised when                       | Cleared when             |
 | ------------------------ | ---------- | ---------- | --------------------------------- | ------------------------ |
-| Bitcoin's Auto-Configure | `bitcoind` | `critical` | Bitcoin is selected and does not have ZMQ enabled | Bitcoin's settings match |
+| Auto-Configure | `bitcoind` or `bitcoind-testnet` | `critical` | Selected node does not have ZMQ enabled | Node's settings match |
 
 Registered so it re-raises if Bitcoin's configuration later stops matching — for example after restoring Bitcoin from a backup taken without ZMQ. For rbitcoin, the pool polls instead of using ZMQ.
 
@@ -165,7 +166,7 @@ The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No du
 1. **The developer fee is pinned off.** The key is named in the model specifically so a value planted on the volume cannot survive.
 2. **One selected node is required.** Bitcoin needs ZMQ; rbitcoin needs JSON-RPC and credentials.
 3. **The pool refuses to start when the selected node’s bridge address is unavailable.** A resolved address does not prove RPC is working.
-4. **Mainnet only.**
+4. **Mainnet and Testnet4.** Bitcoin Core and rbitcoin use mainnet; Bitcoin Testnet4 uses testnet address encoding and a separate `testnet4/` pool database. Configure miners with a testnet payout address when using Testnet4.
 5. **The UI's displayed Stratum address is patched into the built bundle at start** — it is display text, not a binding.
 6. **The pool's `.env` is mounted read-only** and is not editable from inside the container.
 7. **No riscv64 build.** x86_64 and aarch64 only.
@@ -185,7 +186,7 @@ subcontainers:
   - stratum # the pool server; the one to attach to
   - ui # nginx serving the built web app
 volumes:
-  main: its mainnet/ at /public-pool/DB, its .env at /public-pool/.env (read-only file)
+  main: its mainnet/ or testnet4/ at /public-pool/DB, its .env at /public-pool/.env (read-only file)
 file_models:
   - .env
   - store.json
@@ -193,13 +194,14 @@ startos_managed_env_vars: [] # the pool is configured by .env, not container env
 dependencies:
   - bitcoind # optional, active when selected; ZMQ required
   - rbitcoin # optional, active when selected; RPC required
+  - bitcoind-testnet # optional, active when selected; ZMQ required
 interfaces:
   ui: { type: ui, port: 80 }
   stratum: { type: api, port: 3333 } # plus StartOS-terminated TLS on a second port
 actions:
   - config
 tasks:
-  - { action: autoconfig, severity: critical } # on bitcoind; re-raises
+  - { action: autoconfig, severity: critical } # on selected bitcoind or bitcoind-testnet; re-raises
 health_checks:
   - stratum # displayed "Stratum Server"
   - ui # displayed "Web Interface"

@@ -1,26 +1,25 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '#rbitcoin:0.2.5:27',
+  version: '#rbitcoin:0.2.5:28',
   releaseNotes: {
     en_US:
-      'Choose Bitcoin Core or rbitcoin in Configure. Public Pool reads the selected node’s RPC cookie automatically. Requires StartOS 0.4.2 or later.',
+      'Select Bitcoin Testnet4 as a mining backend. rbitcoin is the default for new configurations. When using Bitcoin Core or Bitcoin Testnet4, Public Pool now reads only the RPC credential rather than the node’s data directory. Update the selected Bitcoin service first.',
     es_ES:
-      'Elige Bitcoin Core o rbitcoin en Configurar. Public Pool lee automáticamente la cookie RPC del nodo seleccionado. Requiere StartOS 0.4.2 o posterior.',
+      'Selecciona Bitcoin Testnet4 para la minería. rbitcoin es la opción predeterminada en nuevas configuraciones. Con Bitcoin Core o Bitcoin Testnet4, Public Pool ahora solo lee la credencial RPC y no el directorio de datos. Actualiza primero el servicio Bitcoin seleccionado.',
     de_DE:
-      'Wähle Bitcoin Core oder rbitcoin unter Konfigurieren. Public Pool liest das RPC-Cookie des ausgewählten Knotens automatisch. Erfordert StartOS 0.4.2 oder neuer.',
+      'Wähle Bitcoin Testnet4 als Mining-Backend. Für neue Konfigurationen ist rbitcoin voreingestellt. Bei Bitcoin Core oder Bitcoin Testnet4 liest Public Pool nur noch die RPC-Zugangsdaten statt des Datenverzeichnisses. Aktualisiere zuerst den ausgewählten Bitcoin-Dienst.',
     pl_PL:
-      'Wybierz Bitcoin Core lub rbitcoin w konfiguracji. Public Pool automatycznie odczytuje plik cookie RPC wybranego węzła. Wymaga StartOS 0.4.2 lub nowszego.',
+      'Wybierz Bitcoin Testnet4 jako zaplecze wydobycia. W nowych konfiguracjach domyślnie używany jest rbitcoin. Dla Bitcoin Core lub Bitcoin Testnet4 Public Pool odczytuje teraz tylko dane RPC zamiast katalogu danych. Najpierw zaktualizuj wybraną usługę Bitcoin.',
     fr_FR:
-      'Choisissez Bitcoin Core ou rbitcoin dans Configurer. Public Pool lit automatiquement le cookie RPC du nœud sélectionné. Nécessite StartOS 0.4.2 ou ultérieur.',
+      'Choisissez Bitcoin Testnet4 pour le minage. rbitcoin est le choix par défaut pour les nouvelles configurations. Avec Bitcoin Core ou Bitcoin Testnet4, Public Pool ne lit désormais que les identifiants RPC, pas le répertoire de données. Mettez d’abord à jour le service Bitcoin choisi.',
   },
   migrations: {
     up: async () => {},
     down: IMPOSSIBLE,
     other: {
-      '=0.2.5:26': {
-        up: async () => {},
-      },
+      '=0.2.5:26': { up: async () => {} },
+      '=0.2.5:27': { up: async () => {} },
     },
   },
 })
